@@ -1,5 +1,7 @@
 import { Colors } from '@/constants/Colors';
 import { useTheme } from '@/contexts/ThemeContext';
+import { AccountabilityPartner, Habit } from '@/utils/storage';
+import { sendAccountabilityMessage } from '@/utils/whatsapp';
 import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, LayoutChangeEvent, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
@@ -31,23 +33,6 @@ function calculateStreak(completionsByDate: Record<string, boolean>): number {
   return streak;
 }
 
-interface Habit {
-  id: string;
-  name: string;
-  // Completed means today's box is checked
-  completed: boolean;
-  // Rolling streak of consecutive completed days up to today
-  streak: number;
-  createdAt: Date;
-  // Per-day completion map: YYYY-MM-DD -> true
-  completionsByDate: Record<string, boolean>;
-  // Whether user wants notifications for this habit
-  notify?: boolean;
-  // Notification time (HH:MM format)
-  notifyTime?: string;
-  // Notification ID for cancellation
-  notificationId?: string;
-}
 
 interface HabitTrackerProps {
   habits?: Habit[];
@@ -67,6 +52,22 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
   const colors = Colors[currentTheme];
   const [editingHabitId, setEditingHabitId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+  const [accountabilityPartner, setAccountabilityPartner] = useState<AccountabilityPartner | null>(null);
+
+  // Load accountability partner from storage on mount
+  useEffect(() => {
+    async function fetchPartner() {
+      try {
+        // Dynamically import to avoid circular dependency if any
+        const { loadAccountabilityPartner } = await import('@/utils/storage');
+        const partner = await loadAccountabilityPartner();
+        setAccountabilityPartner(partner);
+      } catch (error) {
+        console.error('Failed to load accountability partner:', error);
+      }
+    }
+    fetchPartner();
+  }, []);
 
   const monthMeta = useMemo(() => {
     const year = visibleMonth.getFullYear();
@@ -93,15 +94,22 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
     setVisibleMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
   };
 
-  const toggleDay = (habitId: string, year: number, monthZero: number, day: number) => {
+  const toggleDay = async (habitId: string, year: number, monthZero: number, day: number) => {
     const iso = formatISODate(new Date(year, monthZero, day));
     const todayKey = formatISODate(new Date());
     const updated = habits.map(h => {
       if (h.id !== habitId) return h;
       const completions = { ...h.completionsByDate };
+      const wasCompleted = completions[iso];
       completions[iso] = !completions[iso];
       const newCompleted = !!completions[todayKey];
       const newStreak = calculateStreak(completions);
+    
+      // Send accountability message if completing today's habit
+      if (iso === todayKey && !wasCompleted && completions[iso] && accountabilityPartner?.enabled) {
+        sendAccountabilityMessage(accountabilityPartner, h.name).catch(console.error);
+      }
+      
       return { ...h, completionsByDate: completions, completed: newCompleted, streak: newStreak };
     });
     onHabitsChange?.(updated);
@@ -129,9 +137,9 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
     }
   };
 
-  const toggleHabitToday = (habitId: string) => {
+  const toggleHabitToday = async (habitId: string) => {
     const now = new Date();
-    toggleDay(habitId, now.getFullYear(), now.getMonth(), now.getDate());
+    await toggleDay(habitId, now.getFullYear(), now.getMonth(), now.getDate());
   };
 
   const scheduleNotification = async (habitId: string, habitName: string, time: string) => {
@@ -286,6 +294,7 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
     setEditingHabitId(null);
     setEditingName('');
   };
+
 
   const openHabitActions = (habit: Habit) => {
     Alert.alert(
@@ -499,12 +508,14 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
                   ))}
                 </ScrollView>
               </View>
+
             </ThemedView>
           ))
         )}
       </ScrollView>
 
       {habits.length > 0 && (
+        <ScrollView contentContainerStyle={{ paddingBottom: 48 }}>
         <ThemedView style={styles.stats}>
           <ThemedText type="subtitle">Today's Progress</ThemedText>
           <ThemedText style={styles.progressText}>
@@ -522,6 +533,7 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
             />
           </ThemedView>
         </ThemedView>
+        </ScrollView>
       )}
     </ThemedView>
   );
@@ -694,11 +706,12 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#454141ff',
     borderRadius: 4,
     overflow: 'hidden',
   },
   progressFill: {
+    color: 'black',
     height: '100%',
     borderRadius: 4,
   },

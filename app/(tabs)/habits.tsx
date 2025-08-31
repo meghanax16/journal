@@ -1,10 +1,11 @@
+import { GlobalAccountabilityPartner } from '@/components/GlobalAccountabilityPartner';
 import { HabitTracker } from '@/components/HabitTracker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
-import { loadHabits, saveHabits, Habit } from '@/utils/storage';
+import { Habit, loadHabits, saveHabits } from '@/utils/storage';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 
 export default function HabitsScreen() {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -38,14 +39,19 @@ export default function HabitsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <ThemedText type="title">Habit Tracker</ThemedText>
-        <ThemedText style={styles.subtitle}>
-          Build positive habits and track your progress
-        </ThemedText>
-      </ThemedView>
+      <ScrollView showsVerticalScrollIndicator={false} 
+       contentContainerStyle={{ paddingBottom: 48 }}>
+        <ThemedView style={styles.header}>
+          <ThemedText type="title">Habit Tracker</ThemedText>
+          <ThemedText style={styles.subtitle}>
+            Build positive habits and track your progress
+          </ThemedText>
+        </ThemedView>
 
-      <HabitTracker habits={habits} onHabitsChange={handleHabitsChange} />
+        <GlobalAccountabilityPartner />
+        
+        <HabitTracker habits={habits} onHabitsChange={handleHabitsChange} />
+      </ScrollView>
     </ThemedView>
   );
 }

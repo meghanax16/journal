@@ -5,6 +5,7 @@ const STORAGE_KEYS = {
   DETAILED_ENTRIES: 'journal_detailed_entries',
   GRATITUDE_ENTRIES: 'journal_gratitude_entries',
   HIGHLIGHT_ENTRIES: 'journal_highlight_entries',
+  ACCOUNTABILITY_PARTNERS: 'journal_accountability_partners',
 };
 
 // Generic storage functions
@@ -71,11 +72,19 @@ export const clearAllJournalData = async (): Promise<void> => {
       AsyncStorage.removeItem(STORAGE_KEYS.GRATITUDE_ENTRIES),
       AsyncStorage.removeItem(STORAGE_KEYS.HIGHLIGHT_ENTRIES),
       AsyncStorage.removeItem('@journal_habits'),
+      AsyncStorage.removeItem(STORAGE_KEYS.ACCOUNTABILITY_PARTNERS),
     ]);
   } catch (error) {
     console.error('Error clearing journal data:', error);
   }
 };
+
+// Accountability Partner data types
+export interface AccountabilityPartner {
+  name: string;
+  phoneNumber: string;
+  enabled: boolean;
+}
 
 // Habit data types
 export interface Habit {
@@ -88,6 +97,7 @@ export interface Habit {
   notify?: boolean;
   notifyTime?: string;
   notificationId?: string;
+  accountabilityPartner?: AccountabilityPartner;
 }
 
 // Save habits to storage
@@ -137,13 +147,32 @@ export const clearHabitsData = async (): Promise<void> => {
 };
 
 // Export all journal data
+// Global accountability partner functions
+export const saveAccountabilityPartner = async (partner: AccountabilityPartner): Promise<void> => {
+  await saveToStorage(STORAGE_KEYS.ACCOUNTABILITY_PARTNERS, partner);
+};
+
+export const loadAccountabilityPartner = async (): Promise<AccountabilityPartner | null> => {
+  return await loadFromStorage(STORAGE_KEYS.ACCOUNTABILITY_PARTNERS, null);
+};
+
+export const clearAccountabilityPartner = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEYS.ACCOUNTABILITY_PARTNERS);
+  } catch (error) {
+    console.error('Error clearing accountability partner:', error);
+    throw error;
+  }
+};
+
 export const exportAllJournalData = async () => {
   try {
-    const [detailedEntries, gratitudeEntries, highlightEntries, habits] = await Promise.all([
+    const [detailedEntries, gratitudeEntries, highlightEntries, habits, accountabilityPartner] = await Promise.all([
       loadDetailedEntries(),
       loadGratitudeEntries(),
       loadHighlightEntries(),
       loadHabits(),
+      loadAccountabilityPartner(),
     ]);
 
     return {
@@ -152,6 +181,7 @@ export const exportAllJournalData = async () => {
       gratitudeEntries,
       highlightEntries,
       habits,
+      accountabilityPartner,
     };
   } catch (error) {
     console.error('Error exporting journal data:', error);

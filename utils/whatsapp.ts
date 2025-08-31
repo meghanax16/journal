@@ -13,15 +13,17 @@ const formatPhoneNumber = (phoneNumber: string): string => {
 export const sendAccountabilityMessage = async (
   partner: AccountabilityPartner,
   habitName: string,
+  goalsAchievedPercent: number,
   userName: string = 'Your partner'
-): Promise<boolean> => {
+  ): Promise<boolean> => {
   try {
     if (!partner.enabled) {
       return false;
     }
 
     const formattedNumber = formatPhoneNumber(partner.phoneNumber);
-    const message = `🎉 ${userName} just completed their "${habitName}" habit! Keep up the great work and stay motivated! 💪`;
+    const percentText = ` They are now ${goalsAchievedPercent}% closer to achieving their goals! Are you keeping up?`;
+    const message = `🎉 ${userName} just completed their "${habitName}" habit!${percentText} \n\nKeep up the great work and stay motivated! 💪`;
     
     // Create WhatsApp URL
     const whatsappUrl = `whatsapp://send?phone=${formattedNumber}&text=${encodeURIComponent(message)}`;

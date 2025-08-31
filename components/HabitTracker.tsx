@@ -107,7 +107,10 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
     
       // Send accountability message if completing today's habit
       if (iso === todayKey && !wasCompleted && completions[iso] && accountabilityPartner?.enabled) {
-        sendAccountabilityMessage(accountabilityPartner, h.name).catch(console.error);
+        const totalHabits = habits.length > 0 ? habits.length : 1;
+        const completedCount = habits.filter(h => h.completed).length + 1; // +1 for this completion
+        const percent = Math.min(100, Math.max(0, Math.round((completedCount / totalHabits) * 100)));
+        sendAccountabilityMessage(accountabilityPartner, h.name, percent).catch(console.error);
       }
       
       return { ...h, completionsByDate: completions, completed: newCompleted, streak: newStreak };

@@ -1,23 +1,23 @@
-import { JournalEntry } from '@/components/JournalEntry';
 import { GratitudeJournal } from '@/components/GratitudeJournal';
 import { HighlightJournal } from '@/components/HighlightJournal';
+import { JournalEntry } from '@/components/JournalEntry';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Colors } from '@/constants/Colors';
 import { useJournalSettings } from '@/contexts/JournalSettingsContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Colors } from '@/constants/Colors';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { 
-  saveDetailedEntries, 
-  loadDetailedEntries, 
-  saveGratitudeEntries, 
-  loadGratitudeEntries, 
-  saveHighlightEntries, 
-  loadHighlightEntries 
+import {
+  loadDetailedEntries,
+  loadGratitudeEntries,
+  loadHighlightEntries,
+  saveDetailedEntries,
+  saveGratitudeEntries,
+  saveHighlightEntries
 } from '@/utils/storage';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface JournalEntryData {
   id: string;
@@ -355,14 +355,19 @@ export default function JournalScreen() {
           {getJournalSubtitle()}
         </ThemedText>
       </ThemedView>
-
-      <ScrollView 
-        style={styles.content} 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: tabBarHeight + 20 }}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={0}
       >
-        {renderJournalContent()}
-      </ScrollView>
+        <ScrollView 
+          style={styles.content} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: tabBarHeight }}
+        >
+          {renderJournalContent()}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ThemedView>
   );
 }

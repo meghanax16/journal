@@ -97,6 +97,7 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
   const toggleDay = async (habitId: string, year: number, monthZero: number, day: number) => {
     const iso = formatISODate(new Date(year, monthZero, day));
     const todayKey = formatISODate(new Date());
+  let sendMessageHabit: Habit | null = null;
     const updated = habits.map(h => {
       if (h.id !== habitId) return h;
       const completions = { ...h.completionsByDate };
@@ -104,18 +105,28 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
       completions[iso] = !completions[iso];
       const newCompleted = !!completions[todayKey];
       const newStreak = calculateStreak(completions);
-    
-      // Send accountability message if completing today's habit
-      if (iso === todayKey && !wasCompleted && completions[iso] && accountabilityPartner?.enabled) {
-        const totalHabits = habits.length > 0 ? habits.length : 1;
-        const completedCount = habits.filter(h => h.completed).length + 1; // +1 for this completion
-        const percent = Math.min(100, Math.max(0, Math.round((completedCount / totalHabits) * 100)));
-        sendAccountabilityMessage(accountabilityPartner, h.name, percent).catch(console.error);
+      // Track if we should send message after update
+      if (iso === todayKey && !wasCompleted && completions[iso]) {
+        sendMessageHabit = { ...h, completionsByDate: completions, completed: newCompleted, streak: newStreak };
       }
-      
       return { ...h, completionsByDate: completions, completed: newCompleted, streak: newStreak };
     });
     onHabitsChange?.(updated);
+    // After updating habits, send WhatsApp message if needed
+    if (sendMessageHabit) {
+      try {
+        const { loadAccountabilityPartner } = await import('@/utils/storage');
+        const latestPartner = await loadAccountabilityPartner();
+        if (latestPartner && latestPartner.enabled === true) {
+          const totalHabits = updated.length > 0 ? updated.length : 1;
+          const completedCount = updated.filter(h => h.completed).length;
+          const percent = Math.min(100, Math.max(0, Math.round((completedCount / totalHabits) * 100)));
+          sendAccountabilityMessage(latestPartner, (sendMessageHabit as Habit).name, percent).catch(console.error);
+        }
+      } catch (error) {
+        console.error('Failed to fetch latest accountability partner:', error);
+      }
+    }
   };
 
   const scrollToCurrentWeek = () => {

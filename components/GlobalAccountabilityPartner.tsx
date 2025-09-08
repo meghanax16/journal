@@ -3,7 +3,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { AccountabilityPartner, loadAccountabilityPartner, saveAccountabilityPartner } from '@/utils/storage';
 import { validatePhoneNumber } from '@/utils/whatsapp';
 import { useEffect, useState } from 'react';
-import { Alert, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, Switch, TextInput, TouchableOpacity } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 import { IconSymbol } from './ui/IconSymbol';
@@ -176,7 +176,7 @@ export function GlobalAccountabilityPartner() {
                 <ThemedText style={[styles.buttonText, {color: colors.background}]}>Save</ThemedText> 
               </TouchableOpacity> 
               <TouchableOpacity 
-                style={[styles.button, { backgroundColor: '#F5F5F5', flex: 1 }]} 
+                style={[styles.button, { backgroundColor: '#f31313ff', flex: 1 }]} 
                 onPress={cancelEditing} 
               > 
                 <ThemedText style={[styles.buttonText, { color: colors.background }]}>Cancel</ThemedText> 
@@ -189,24 +189,21 @@ export function GlobalAccountabilityPartner() {
               <ThemedText style={[styles.partnerName, { color: colors.text }]}>{partner?.name}</ThemedText> 
               <ThemedText style={[styles.partnerPhone, { color: colors.text }]}>{partner?.phoneNumber}</ThemedText> 
               <ThemedView style={styles.statusRow}> 
-                <TouchableOpacity 
-                  style={[ 
-                    styles.toggleButton, 
-                    { 
-                      backgroundColor: partner?.enabled ? colors.tint : '#F5F5F5', 
-                    }, 
-                  ]} 
-                  onPress={togglePartnerEnabled} 
-                > 
-                  <ThemedText 
-                    style={[ 
-                      styles.toggleText, 
-                      { color: partner?.enabled ? colors.background : 'red' }, 
-                    ]} 
-                  > 
-                    {partner?.enabled ? 'Enabled' : 'Disabled'} 
-                  </ThemedText> 
-                </TouchableOpacity> 
+                <Switch
+                  value={partner?.enabled}
+                  onValueChange={(newValue) => {
+                    togglePartnerEnabled();
+                    setTimeout(() => {
+                      Alert.alert(
+                         newValue ? 'Enabled' : 'Disabled','',
+                        [{ text: 'OK' }]
+                      );
+                    }, 0);
+                  }}
+                  trackColor={{ false: colors.background, true: colors.tint }}
+                  thumbColor={partner?.enabled ? colors.background : colors.tint}
+                />
+
               </ThemedView> 
             </ThemedView> 
             <ThemedView style={styles.actions}> 

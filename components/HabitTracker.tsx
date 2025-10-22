@@ -31,7 +31,7 @@ function calculateStreak(completionsByDate: Record<string, boolean>): number {
     if (completionsByDate[key]) streak += 1; else break;
   }
   return streak;
-}
+} //TODO: Some Bug in the Calculation, it becomes 0 when the todays streak is toggled, tho previous days are marked done.
 
 
 interface HabitTrackerProps {

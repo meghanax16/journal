@@ -28,7 +28,7 @@ export function HighlightJournal({ entry, onSave, onDelete }: HighlightJournalPr
   const { currentTheme } = useTheme();
   const colors = Colors[currentTheme];
 
-  const moods = ['⭐', '🌟', '✨', '💫', '🎉', '🏆', '🎯', '💎'];
+  const moods = ['⭐','🥳','🏆', '🎯', '💎','🤯','😎','🫣','😜','🥰','😮','🥲','😅','👽'];
 
   const handleSave = () => {
     if (highlight.trim()) {

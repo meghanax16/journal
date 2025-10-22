@@ -30,7 +30,7 @@ export function GratitudeJournal({ entry, onSave, onDelete }: GratitudeJournalPr
   const { currentTheme } = useTheme();
   const colors = Colors[currentTheme];
 
-  const moods = ['😊', '😌', '🙏', '💖', '✨', '🌟', '🌈', '🌸'];
+  const moods = ['😌', '🙏', '💖', '✨', '🥹', '🌸','🍀'];
 
   const handleSave = () => {
     if (gratitude1.trim() || gratitude2.trim() || gratitude3.trim()) {

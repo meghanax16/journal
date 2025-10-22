@@ -24,7 +24,7 @@ export function JournalEntry({ entry, onSave, onDelete }: JournalEntryProps) {
   const { currentTheme } = useTheme();
   const colors = Colors[currentTheme];
 
-  const moods = ['😊', '😐', '😢', '😡', '😴', '🤔', '😌', '😤'];
+  const moods = ['😊', '😐', '😢', '😡', '😴', '🤔', '😌', '😤','🥹','🤯','😎','🫣','😜','🥰'];
 
   const handleSave = () => {
     if (content.trim()) {

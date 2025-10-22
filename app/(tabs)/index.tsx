@@ -2,11 +2,15 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { Colors } from '@/constants/Colors';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Image, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function HomeScreen() {
   const { currentTheme } = useTheme();
+  const colors = Colors[currentTheme];
+  const router = useRouter();
   
   return (
     <ParallaxScrollView
@@ -41,7 +45,15 @@ export default function HomeScreen() {
           Start with simple habits like "Drink water" or "Read 10 minutes" and watch your streaks grow. 
           Every day is a new opportunity to improve!
         </ThemedText>
-      </ThemedView>
+    </ThemedView>
+    <TouchableOpacity 
+          style={[styles.button,{backgroundColor: colors.tint}]} 
+          onPress={() => router.push('/(tabs)/habits')}
+        >
+          <ThemedText type="defaultSemiBold" style={[{color: colors.background}]}>
+            Let's Go!
+          </ThemedText>
+        </TouchableOpacity>
     </ParallaxScrollView>
   );
 }
@@ -62,5 +74,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  button: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    minWidth: 100,
+    alignItems: 'center',
   },
 });

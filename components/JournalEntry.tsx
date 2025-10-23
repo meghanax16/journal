@@ -56,7 +56,7 @@ export function JournalEntry({ entry, onSave, onDelete }: JournalEntryProps) {
     return (
       <ThemedView style={styles.entryContainer}>
         <ThemedView style={styles.entryHeader}>
-          <ThemedText type="subtitle">
+          <ThemedText>
             {entry.timestamp.toLocaleDateString()} at {entry.timestamp.toLocaleTimeString()}
           </ThemedText>
           {entry.mood && <ThemedText style={styles.moodText}>{entry.mood}</ThemedText>}
@@ -128,7 +128,7 @@ export function JournalEntry({ entry, onSave, onDelete }: JournalEntryProps) {
           </TouchableOpacity>
         )}
         <TouchableOpacity 
-          style={[styles.button, styles.saveButton]} 
+          style={[styles.button,{backgroundColor: colors.tint}]} 
           onPress={handleSave}
         >
           <ThemedText type="defaultSemiBold" style={styles.saveButtonText}>
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     borderColor: '#2196F3',
   },
   moodEmoji: {
-    fontSize: 24,
+    fontSize: 22,
   },
   textInput: {
     borderWidth: 1,
@@ -190,9 +190,6 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: '#F5F5F5',
   },
-  saveButton: {
-    backgroundColor: '#2196F3',
-  },
   saveButtonText: {
     color: 'white',
   },
@@ -211,7 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   moodText: {
-    fontSize: 24,
+    fontSize: 20,
   },
   entryContent: {
     fontSize: 16,

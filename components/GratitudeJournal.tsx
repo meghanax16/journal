@@ -64,7 +64,7 @@ export function GratitudeJournal({ entry, onSave, onDelete }: GratitudeJournalPr
     return (
       <ThemedView style={styles.entryContainer}>
         <ThemedView style={styles.entryHeader}>
-          <ThemedText type="subtitle">
+          <ThemedText>
             {entry.timestamp.toLocaleDateString()} at {entry.timestamp.toLocaleTimeString()}
           </ThemedText>
           {entry.mood && <ThemedText style={styles.moodText}>{entry.mood}</ThemedText>}
@@ -73,19 +73,19 @@ export function GratitudeJournal({ entry, onSave, onDelete }: GratitudeJournalPr
         <ThemedView style={styles.gratitudeList}>
           {entry.gratitude1 && (
             <ThemedView style={styles.gratitudeItem}>
-              <ThemedText style={styles.gratitudeBullet}>🌟</ThemedText>
+              <ThemedText style={styles.gratitudeBullet}>🌱</ThemedText>
               <ThemedText style={styles.gratitudeText}>{entry.gratitude1}</ThemedText>
             </ThemedView>
           )}
           {entry.gratitude2 && (
             <ThemedView style={styles.gratitudeItem}>
-              <ThemedText style={styles.gratitudeBullet}>🌟</ThemedText>
+              <ThemedText style={styles.gratitudeBullet}>🪻</ThemedText>
               <ThemedText style={styles.gratitudeText}>{entry.gratitude2}</ThemedText>
             </ThemedView>
           )}
           {entry.gratitude3 && (
             <ThemedView style={styles.gratitudeItem}>
-              <ThemedText style={styles.gratitudeBullet}>🌟</ThemedText>
+              <ThemedText style={styles.gratitudeBullet}>🐚</ThemedText>
               <ThemedText style={styles.gratitudeText}>{entry.gratitude3}</ThemedText>
             </ThemedView>
           )}
@@ -202,7 +202,7 @@ export function GratitudeJournal({ entry, onSave, onDelete }: GratitudeJournalPr
           </TouchableOpacity>
         )}
         <TouchableOpacity 
-          style={[styles.button, styles.saveButton]} 
+          style={[styles.button,{backgroundColor:colors.tint}]} 
           onPress={handleSave}
         >
           <ThemedText type="defaultSemiBold" style={styles.saveButtonText}>
@@ -235,11 +235,11 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
   },
   selectedMood: {
-    backgroundColor: '#FFF3E0',
-    borderColor: '#FF9800',
+    backgroundColor: '#FFF9C4',
+    borderColor:'#FFC107',
   },
   moodEmoji: {
-    fontSize: 24,
+    fontSize: 22,
   },
   gratitudeInputs: {
     gap: 16,
@@ -275,9 +275,6 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: '#F5F5F5',
   },
-  saveButton: {
-    backgroundColor: '#FF9800',
-  },
   saveButtonText: {
     color: 'white',
   },
@@ -286,8 +283,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#FFE0B2',
-    backgroundColor: '#FFF8E1',
+    borderColor:'rgb(255, 255, 255)',
+    backgroundColor: '#FFFFFF',
   },
   entryHeader: {
     flexDirection: 'row',
@@ -296,7 +293,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   moodText: {
-    fontSize: 24,
+    fontSize: 20,
   },
   gratitudeList: {
     gap: 12,

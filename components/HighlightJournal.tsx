@@ -61,7 +61,7 @@ export function HighlightJournal({ entry, onSave, onDelete }: HighlightJournalPr
     return (
       <ThemedView style={styles.entryContainer}>
         <ThemedView style={styles.entryHeader}>
-          <ThemedText type="subtitle">
+          <ThemedText>
             {entry.timestamp.toLocaleDateString()} at {entry.timestamp.toLocaleTimeString()}
           </ThemedText>
           {entry.mood && <ThemedText style={styles.moodText}>{entry.mood}</ThemedText>}
@@ -69,8 +69,7 @@ export function HighlightJournal({ entry, onSave, onDelete }: HighlightJournalPr
         
         <ThemedView style={styles.highlightSection}>
           <ThemedView style={styles.highlightHeader}>
-            <ThemedText style={styles.highlightIcon}>⭐</ThemedText>
-            <ThemedText type="subtitle" style={styles.highlightTitle}>Highlight of the Day</ThemedText>
+          <ThemedText type="defaultSemiBold" style={styles.reasonTitle}>Highlight:</ThemedText>
           </ThemedView>
           <ThemedText style={styles.highlightText}>{entry.highlight}</ThemedText>
         </ThemedView>
@@ -168,7 +167,7 @@ export function HighlightJournal({ entry, onSave, onDelete }: HighlightJournalPr
           </TouchableOpacity>
         )}
         <TouchableOpacity 
-          style={[styles.button, styles.saveButton]} 
+          style={[styles.button,{backgroundColor: colors.tint}]} 
           onPress={handleSave}
         >
           <ThemedText type="defaultSemiBold" style={styles.saveButtonText}>
@@ -205,7 +204,7 @@ const styles = StyleSheet.create({
     borderColor: '#FFC107',
   },
   moodEmoji: {
-    fontSize: 24,
+    fontSize: 22,
   },
   textInput: {
     borderWidth: 1,
@@ -235,9 +234,6 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: '#F5F5F5',
   },
-  saveButton: {
-    backgroundColor: '#FFC107',
-  },
   saveButtonText: {
     color: 'white',
   },
@@ -246,8 +242,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#FFE082',
-    backgroundColor: '#FFFDE7',
+    borderColor: '#FFFFFF',
+    backgroundColor: '#FFFFFF',
   },
   entryHeader: {
     flexDirection: 'row',
@@ -256,7 +252,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   moodText: {
-    fontSize: 24,
+    fontSize: 20,
   },
   highlightSection: {
     marginBottom: 16,
@@ -270,9 +266,6 @@ const styles = StyleSheet.create({
   highlightIcon: {
     fontSize: 20,
   },
-  highlightTitle: {
-    color: '#F57C00',
-  },
   highlightText: {
     fontSize: 16,
     lineHeight: 24,
@@ -281,8 +274,6 @@ const styles = StyleSheet.create({
   reasonSection: {
     marginBottom: 16,
     paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#FFE082',
   },
   reasonTitle: {
     marginBottom: 8,

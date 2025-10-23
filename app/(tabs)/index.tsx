@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reactLogo: {
-    height: 178,
+    height: 150,
     width: 290,
     bottom: 0,
     left: 0,

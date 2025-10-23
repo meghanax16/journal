@@ -42,6 +42,16 @@ export default function SettingsScreen() {
           style: themeMode === 'dark' ? 'default' : undefined
         },
         { 
+          text: 'Pastel Pink', 
+          onPress: () => toggleTheme('pastel_pink'),
+          style: themeMode === 'pastel_pink' ? 'default' : undefined
+        },
+        { 
+          text: 'Sage Green', 
+          onPress: () => toggleTheme('sage_green_light'),
+          style: themeMode === 'sage_green_light' ? 'default' : undefined
+        },
+        { 
           text: 'System', 
           onPress: () => toggleTheme('system'),
           style: themeMode === 'system' ? 'default' : undefined
@@ -183,7 +193,7 @@ export default function SettingsScreen() {
             </ThemedView>
             <ThemedView style={styles.settingRight}>
               <ThemedText style={styles.settingValue}>
-                {themeMode === 'system' ? 'System' : themeMode === 'dark' ? 'Dark' : 'Light'}
+                {themeMode === 'system' ? 'System' : themeMode === 'dark' ? 'Dark' : themeMode === 'pastel_pink'?'Pastel Pink': themeMode === 'sage_green_light'?'Sage Green':'Light'}
               </ThemedText>
               <IconSymbol name="chevron.right" size={16} color={colors.tabIconDefault} />
             </ThemedView>

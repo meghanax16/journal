@@ -223,11 +223,11 @@ export default function JournalScreen() {
       return (
         <ThemedView key={type} style={styles.entriesSubsection}>
           <TouchableOpacity 
-            style={styles.subsectionHeader}
+            style={[styles.subsectionHeader,{backgroundColor:colors.tint}]}
             onPress={() => toggleSection(type as 'gratitude' | 'highlight' | 'detailed')}
           >
-            <IconSymbol name={icon as any} size={18} color={colors.tint} />
-            <ThemedText type="subtitle" style={styles.subsectionTitle}>
+            <IconSymbol name={icon as any} size={18} color={colors.background} />
+            <ThemedText type="subtitle" style={[styles.subsectionTitle,{color:colors.background}]}>
               {title} ({sectionEntries.length})
             </ThemedText>
             <IconSymbol 
@@ -326,15 +326,20 @@ export default function JournalScreen() {
         {getTotalEntriesCount() > 0 && (
           <ThemedView style={styles.previousEntriesToggle}>
             <TouchableOpacity 
-              style={[styles.toggleButton, { borderColor: colors.tint }]}
+              style={[styles.toggleButton, 
+                { 
+                  borderColor: colors.tint,
+                  backgroundColor: showPreviousEntries ? colors.background : colors.tint,
+                },]}
               onPress={() => setShowPreviousEntries(!showPreviousEntries)}
             >
               <IconSymbol 
                 name={showPreviousEntries ? "chevron.up" : "chevron.down"} 
                 size={16} 
-                color={colors.tint} 
+                color={showPreviousEntries ? colors.tint : colors.background} 
               />
-              <ThemedText style={[styles.toggleText, { color: colors.tint }]}>
+              <ThemedText style={[styles.toggleText, 
+                { color: showPreviousEntries ? colors.tint : colors.background }]}>
                 {showPreviousEntries ? 'Hide' : 'Show'} Previous Entries ({getTotalEntriesCount()})
               </ThemedText>
             </TouchableOpacity>
@@ -374,7 +379,7 @@ export default function JournalScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   header: {
     padding: 20,
@@ -453,7 +458,7 @@ const styles = StyleSheet.create({
   },
   subsectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     flex: 1,
     marginLeft: 8,
   },

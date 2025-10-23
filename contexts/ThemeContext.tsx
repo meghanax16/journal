@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = 'light' | 'dark' | 'pastel_pink'|'sage_green_light' |'system';
 
 interface ThemeContextType {
   themeMode: ThemeMode;
-  currentTheme: 'light' | 'dark';
+  currentTheme: 'light' | 'dark' | 'pastel_pink' |'sage_green_light';
   toggleTheme: (theme: ThemeMode) => Promise<void>;
   isLoading: boolean;
 }

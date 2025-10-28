@@ -1,0 +1,5 @@
+langchain
+fastmcp
+dotenv
+langchain_mcp_adapters
+langchain_openai

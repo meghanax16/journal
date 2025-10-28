@@ -433,7 +433,11 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
                   onPress={() => toggleHabitToday(habit.id)}
                 >
                   {habit.completed && (
-                    <IconSymbol name="checkmark" size={16} color="white" />
+                    <IconSymbol
+                    name="checkmark"
+                    size={16}
+                    color={currentTheme === 'dark' ? 'black' : 'white'}
+                  />
                   )}
                 </TouchableOpacity>
                 

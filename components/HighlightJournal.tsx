@@ -170,7 +170,7 @@ export function HighlightJournal({ entry, onSave, onDelete }: HighlightJournalPr
           style={[styles.button,{backgroundColor: colors.tint}]} 
           onPress={handleSave}
         >
-          <ThemedText type="defaultSemiBold" style={styles.saveButtonText}>
+          <ThemedText type="defaultSemiBold" style={{color: colors.background}}>
             {entry ? 'Update' : 'Save Highlight'}
           </ThemedText>
         </TouchableOpacity>
@@ -233,9 +233,6 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: '#F5F5F5',
-  },
-  saveButtonText: {
-    color: 'white',
   },
   entryContainer: {
     margin: 16,

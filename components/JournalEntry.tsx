@@ -61,7 +61,7 @@ export function JournalEntry({ entry, onSave, onDelete }: JournalEntryProps) {
           </ThemedText>
           {entry.mood && <ThemedText style={styles.moodText}>{entry.mood}</ThemedText>}
         </ThemedView>
-        <ThemedText style={styles.entryContent}>{entry.content}</ThemedText>
+        <ThemedText style={[styles.entryContent,{backgroundColor: colors.background}]}>{entry.content}</ThemedText>
         <ThemedView style={styles.entryActions}>
           <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.actionButton}>
             <IconSymbol name="pencil" size={20} color={colors.tint} />
@@ -131,7 +131,7 @@ export function JournalEntry({ entry, onSave, onDelete }: JournalEntryProps) {
           style={[styles.button,{backgroundColor: colors.tint}]} 
           onPress={handleSave}
         >
-          <ThemedText type="defaultSemiBold" style={styles.saveButtonText}>
+          <ThemedText type="defaultSemiBold" style={{color: colors.background}}>
             {entry ? 'Update' : 'Save Entry'}
           </ThemedText>
         </TouchableOpacity>
@@ -189,9 +189,6 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: '#F5F5F5',
-  },
-  saveButtonText: {
-    color: 'white',
   },
   entryContainer: {
     margin: 16,

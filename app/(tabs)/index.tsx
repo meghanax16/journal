@@ -48,7 +48,7 @@ export default function HomeScreen() {
     </ThemedView>
     <TouchableOpacity 
           style={[styles.button,{backgroundColor: colors.tint}]} 
-          onPress={() => router.push('/(tabs)/habits')}
+          onPress={() => router.push('/(tabs)/assistant')}
         >
           <ThemedText type="defaultSemiBold" style={[{color: colors.background}]}>
             Let's Go!

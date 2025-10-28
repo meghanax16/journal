@@ -14,7 +14,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 const HEADER_HEIGHT = 200;
 
 type Props = PropsWithChildren<{
-  headerImage: ReactElement;
+  headerImage?: ReactElement;
   headerBackgroundColor: { dark: string; light: string };
 }>;
 

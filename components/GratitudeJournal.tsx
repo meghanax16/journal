@@ -205,7 +205,7 @@ export function GratitudeJournal({ entry, onSave, onDelete }: GratitudeJournalPr
           style={[styles.button,{backgroundColor:colors.tint}]} 
           onPress={handleSave}
         >
-          <ThemedText type="defaultSemiBold" style={styles.saveButtonText}>
+          <ThemedText type="defaultSemiBold" style={{color: colors.background}}>
             {entry ? 'Update' : 'Save Gratitude'}
           </ThemedText>
         </TouchableOpacity>
@@ -274,9 +274,6 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: '#F5F5F5',
-  },
-  saveButtonText: {
-    color: 'white',
   },
   entryContainer: {
     margin: 16,

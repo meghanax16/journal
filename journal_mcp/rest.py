@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Any, Dict, List
 import uuid
 from datetime import datetime
 import os
+from client import create_mcp_agent
 
 from pymongo import MongoClient, UpdateOne
 import traceback
@@ -12,9 +14,46 @@ from dotenv import load_dotenv
 
 load_dotenv()  # load .env if present
 app = FastAPI(title="Journal REST API")
+agent_instance = None
+
+@app.on_event("startup")
+async def startup_event():
+    global agent_instance
+    print("🚀 Initializing MCP Agent...")
+    agent_instance = await create_mcp_agent()
+    print("✅ MCP Agent ready!")
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+@app.post("/ask")
+async def ask(request: Request):
+    global agent_instance
+    if not agent_instance:
+        return JSONResponse({"error": "Agent not initialized yet"}, status_code=503)
+
+    data = await request.json()
+    user_message = data.get("message", "")
+
+    if not user_message.strip():
+        return JSONResponse({"error": "Empty message"}, status_code=400)
+
+    try:
+        # Ask the MCP-powered agent
+        result = await agent_instance.ainvoke({
+            "messages": [{"role": "user", "content": user_message}]
+        })
+
+        reply = result["messages"][-1].content
+        return JSONResponse({"reply": reply})
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+    return JSONResponse({"reply":"hi"})
 
 
 app.add_middleware(

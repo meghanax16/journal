@@ -61,38 +61,23 @@ export default function HomeScreen() {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
   
-    let aiResponseText = '';
+    try {
+      const response = await fetch('http://127.0.0.1:8100/ask', {  // 👈 replace with your IP
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input }),
+      });
   
-    // try {
-    //   // Detect user command
-    //   if (input.toLowerCase().startsWith('add habit')) {
-    //     const habitName = input.replace(/add habit/i, '').trim();
-    //     const result = await callMcpTool('add_habits', { name: habitName });
-    //     aiResponseText = `✅ Added new habit: "${result.name}"`;
-    //   } else if (input.toLowerCase().startsWith('add')) {
-    //     // Example: "add 5 and 6"
-    //     const numbers = input.match(/\d+/g);
-    //     if (numbers && numbers.length === 2) {
-    //       const [a, b] = numbers.map(Number);
-    //       const result = await callMcpTool('add', { a, b });
-    //       aiResponseText = `🤖 ${a} + ${b} = ${result}`;
-    //     } else {
-    //       aiResponseText = '⚠️ Please enter numbers like "add 2 and 3".';
-    //     }
-    //   } else {
-    //     aiResponseText = "🤔 I'm not sure what to do with that yet!";
-    //   }
-    // } catch (err: any) {
-    //   aiResponseText = `⚠️ Error: ${err.message}`;
-    // }
-  
-    // setMessages(prev => [...prev, { role: 'ai', text: aiResponseText }]);
-  
-    // setTimeout(() => {
-    //   scrollViewRef.current?.scrollToEnd({ animated: true });
-    // }, 100);
+      const data = await response.json();
+      const aiMessage = data.reply || data.error || '⚠️ No response from agent.';
+      setMessages(prev => [...prev, { role: 'ai', text: aiMessage }]);
+    } catch (err) {
+      console.error('Network error:', err);
+      setMessages(prev => [...prev, { role: 'ai', text: '⚠️ Network error: cannot reach backend.' }]);
+    }
   };
-
+  
+  
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView

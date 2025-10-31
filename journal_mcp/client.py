@@ -17,6 +17,8 @@ async def main():
     load_dotenv()
     model = ChatOpenAI(model="gpt-4o")
     tools = await client.get_tools()
+
+    # print(tool.name for tool in tools)
     
     agent = create_agent(
         model,
@@ -24,7 +26,7 @@ async def main():
     )
     
     math_response = await agent.ainvoke(
-        {"messages": [{"role": "user", "content": "Add 2 and 3"}]}
+        {"messages": [{"role": "user", "content": "Mark reading as completed for yesterday"}]}
     )
 
     print(math_response["messages"][-1].content)

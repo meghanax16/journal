@@ -107,11 +107,20 @@ export const saveHabits = async (habits: Habit[]): Promise<void> => {
       ...habit,
       createdAt: habit.createdAt.toISOString(),
     }));
-    console.log('DEBUG saveHabits: Saving habits to storage:', habits.length, habitsData);
-    await AsyncStorage.setItem('@journal_habits', JSON.stringify(habitsData));
-    console.log('DEBUG saveHabits: Successfully saved to AsyncStorage');
+    console.log('DEBUG saveHabits: Saving habits to Mongo via REST:', habits.length);
+    const baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8100';
+    const res = await fetch(`${baseUrl}/habits/bulk`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(habitsData),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Mongo save failed: ${res.status} ${text}`);
+    }
+    console.log('DEBUG saveHabits: Successfully saved to Mongo');
   } catch (error) {
-    console.error('Error saving habits:', error);
+    console.error('Error saving habits to Mongo:', error);
     throw error;
   }
 };
@@ -119,20 +128,40 @@ export const saveHabits = async (habits: Habit[]): Promise<void> => {
 // Load habits from storage
 export const loadHabits = async (): Promise<Habit[]> => {
   try {
-    const habitsJson = await AsyncStorage.getItem('@journal_habits');
-    console.log('DEBUG loadHabits: Raw storage data:', habitsJson);
-    if (!habitsJson) return [];
-    
-    const habitsData = JSON.parse(habitsJson);
-    const processedHabits = habitsData.map((habit: any) => ({
-      ...habit,
+    const baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8100';
+    const res = await fetch(`${baseUrl}/habits`);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch habits: ${res.status}`);
+    }
+    const habitsData = await res.json();
+    const processedHabits: Habit[] = (habitsData || []).map((habit: any) => ({
+      id: habit.id,
+      name: habit.name,
+      completed: Boolean(habit.completed),
+      streak: Number(habit.streak || 0),
       createdAt: new Date(habit.createdAt),
+      completionsByDate: habit.completionsByDate || {},
+      notify: habit.notify,
+      notifyTime: habit.notifyTime,
+      notificationId: habit.notificationId,
+      accountabilityPartner: habit.accountabilityPartner,
     }));
-    console.log('DEBUG loadHabits: Processed habits:', processedHabits.length, processedHabits);
+    console.log('DEBUG loadHabits (Mongo):', processedHabits.length);
     return processedHabits;
   } catch (error) {
-    console.error('Error loading habits:', error);
-    return [];
+    console.error('Error loading habits from Mongo, falling back to AsyncStorage:', error);
+    try {
+      const habitsJson = await AsyncStorage.getItem('@journal_habits');
+      if (!habitsJson) return [];
+      const habitsData = JSON.parse(habitsJson);
+      return habitsData.map((habit: any) => ({
+        ...habit,
+        createdAt: new Date(habit.createdAt),
+      }));
+    } catch (e) {
+      console.error('Fallback loadHabits failed:', e);
+      return [];
+    }
   }
 };
 

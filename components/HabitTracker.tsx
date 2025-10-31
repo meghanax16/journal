@@ -112,6 +112,33 @@ export function HabitTracker({ habits = [], onHabitsChange }: HabitTrackerProps)
       return { ...h, completionsByDate: completions, completed: newCompleted, streak: newStreak };
     });
     onHabitsChange?.(updated);
+
+    // Persist server-side when marking today complete (false -> true)
+    try {
+      if (iso === todayKey) {
+        const changed = habits.find(h => h.id === habitId)?.completionsByDate?.[iso] !== true;
+        const nowCompleted = updated.find(h => h.id === habitId)?.completionsByDate?.[iso] === true;
+        if (changed && nowCompleted) {
+          const baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8100';
+          const res = await fetch(`${baseUrl}/habits/complete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: habitId, date: iso }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const serverStreak = typeof data?.streak === 'number' ? data.streak : undefined;
+            if (serverStreak !== undefined) {
+              const reconciled = updated.map(h => h.id === habitId ? { ...h, streak: serverStreak, completed: true } : h);
+              onHabitsChange?.(reconciled);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Non-fatal: keep local optimistic state
+      console.warn('Failed to persist habit completion:', e);
+    }
     // After updating habits, send WhatsApp message if needed
     if (sendMessageHabit) {
       try {
